@@ -44,6 +44,9 @@ public class ClientHandler extends Thread {
                     break;
                 }
 
+                //IN PRODUCTION
+                System.out.println(checkForCommands(message));
+
                 System.out.println("ClientHandler: TEXT WAS ENTERED");
                 for (int i = 0; i < clientSockets.size(); i++) {
 
@@ -69,5 +72,38 @@ public class ClientHandler extends Thread {
                 System.out.println("Couldn't close client socket properly.");
             }
         }
+    }
+
+    private boolean checkForCommands(String message) {
+        try {
+            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+            switch (message) {
+                case "/":
+                    out.println("Unknown command");
+                    out.flush();
+                    return true;
+                case "/quit":
+                    out.println("Qutting..");
+                    out.flush();
+                    return true;
+                case "who":
+                    out.println("Who am I?");
+                    out.flush();
+                    return true;
+                case "/nick":
+                    out.println("Unknown command");
+                    out.flush();
+                    return true;
+                case "/help":
+                    out.println("Unknown command");
+                    out.flush();
+                    return true;
+            }
+        }catch (IOException e) {
+            System.err.println(e.getMessage());
+        }finally {
+            return false;
+        }
+
     }
 }
