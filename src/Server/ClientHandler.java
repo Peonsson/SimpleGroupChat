@@ -33,23 +33,19 @@ public class ClientHandler extends Thread {
             //TODO commands: /quit, /who, /nick <nickname>, /help, / prints "unknown command"
             while (true) {
                 // Get message from client and echo it back
+                System.out.println("Thread " + Thread.currentThread().getId() + " blocking at readLine...");
                 message = in.readLine();
 
                 if (message.equals("") || message.equals("\n")) {
-                    System.out.println("GÅR DEN IN HÄR");
-//                    int socketToRemove = clientSockets.indexOf(clientSocket);
-//                    clientSockets.remove(socketToRemove);
+                    System.out.println("Breaking at thread " + Thread.currentThread().getId() + "...");
                     break;
                 }
 
-                System.out.println("TEXT WAS ENTERED");
                 // Send message to all clients
                 for (int i = 0; i < clientSockets.size(); i++) {
-//                    if(clientSockets.get(i).isClosed())
-//                        clientSockets.remove(i);
-
-                    if(clientSockets.get(i).equals(clientSocket))
+                    if (clientSockets.get(i).equals(clientSocket))
                         continue;
+
                     out = new PrintWriter(clientSockets.get(i).getOutputStream(), true);
                     System.out.println("Sending: " + message + " to client; " + clientSockets.get(i).getInetAddress() + ": " + clientSockets.get(i).getPort());
                     out.println(message);
@@ -60,13 +56,15 @@ public class ClientHandler extends Thread {
             System.out.println("client put nothing in string");
         }
         catch (IOException ioe) {
-            System.out.println("ClientHandler: IOException.");
+            System.out.println("ClientHandler " + Thread.currentThread().getId() + " : IOException.");
             System.out.println(ioe.getMessage());
         }
         finally {
+            System.out.println("Thread " + Thread.currentThread().getId() + " is in finally block. Closing in, out, and socket.");
             try {
-                in.close();
-                out.close();
+//                in.close();
+//                out.close();
+                System.out.println("Closing socket with port: " + clientSocket.getPort());
                 clientSocket.close();
             }
             catch (IOException ioe) {

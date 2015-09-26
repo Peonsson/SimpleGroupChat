@@ -20,10 +20,11 @@ public class Server {
             serverSocket = new ServerSocket(50015);
             System.out.println("Waiting for connections..");
             while (listening) {
-                Socket clientSocket = serverSocket.accept();
-                clients.add(clientSocket);
+//                Socket clientSocket = ;
+                clients.add(serverSocket.accept());
+                int indexOfLastAddedSocket = clients.size() - 1;
 
-                ClientHandler cHandler = new ClientHandler(clientSocket, clients);
+                ClientHandler cHandler = new ClientHandler(clients.get(indexOfLastAddedSocket), clients);
 
                 // Start a new thread which handles an individual client
                 cHandler.start();
