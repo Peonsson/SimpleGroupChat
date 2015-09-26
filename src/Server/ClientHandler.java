@@ -20,23 +20,12 @@ public class ClientHandler extends Thread {
 
     // Stuff to do with individual client
     public void run() {
-        BufferedReader in;
-
         try {
             String message;
-            in = new BufferedReader(new InputStreamReader(client.getClientSocket().getInputStream()));
+            BufferedReader in = new BufferedReader(new InputStreamReader(client.getClientSocket().getInputStream()));
 
             while (true) {
                 message = in.readLine();
-
-                if (message.equals("") || message.equals("\n")) {
-                    int clientToRemove = connectedClients.indexOf(client);
-                    synchronized (connectedClients) {
-                        connectedClients.remove(clientToRemove);
-                    }
-
-                    break;
-                }
 
                 if (!checkForCommands(message)) {
                     broadcast(client.getNickname() + ": " + message);
@@ -44,15 +33,7 @@ public class ClientHandler extends Thread {
             }
         }
         catch (IOException ioe) {
-            System.out.println(ioe.getMessage());
-        }
-        finally {
-            try {
-                client.getClientSocket().close();
-            }
-            catch (IOException ioe) {
-                System.out.println("Couldn't close client socket properly.");
-            }
+            return;
         }
     }
 
@@ -63,6 +44,7 @@ public class ClientHandler extends Thread {
             switch (message) {
                 case "/quit":
                     int clientToRemove = connectedClients.indexOf(client);
+                    client.getClientSocket().close();
                     synchronized (connectedClients) {
                         connectedClients.remove(clientToRemove);
                     }

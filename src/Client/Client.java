@@ -26,11 +26,11 @@ public class Client {
 
             Scanner scan = new Scanner(System.in);
 
-            String message = null;
-            while (message == null || !message.equals("")) {
+            String message;
+            while (true) {
                 message = scan.nextLine();
                 out.println(message);
-                if(message.equals("/quit")) {
+                if (message.equals("/quit")) {
                     System.out.println("Halting execution..");
                     break;
                 }
