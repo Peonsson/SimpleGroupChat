@@ -12,33 +12,28 @@ import java.util.ArrayList;
  */
 public class Server {
     public static void main(String[] args) {
-        boolean listening = true;
         ServerSocket serverSocket = null;
-        ArrayList<Socket> clients = new ArrayList<>();
+        ArrayList<Socket> clients = new ArrayList<Socket>();
 
         try {
             serverSocket = new ServerSocket(50015);
-            System.out.println("Waiting for connections..");
-            while (listening) {
-//                Socket clientSocket = ;
-                clients.add(serverSocket.accept());
-                int indexOfLastAddedSocket = clients.size() - 1;
-
-                ClientHandler cHandler = new ClientHandler(clients.get(indexOfLastAddedSocket), clients);
-
-                // Start a new thread which handles an individual client
+            System.out.println("Server: Waiting for connections..");
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
+                clients.add(clientSocket);
+                ClientHandler cHandler = new ClientHandler(clientSocket, clients);
                 cHandler.start();
             }
         }
         catch (IOException ioe) {
-            System.out.println("Couldn't create server socket.");
+            System.out.println("Server: Couldn't create server socket.");
         }
         finally {
             try {
                 serverSocket.close();
             }
             catch (IOException ioe) {
-                System.out.println("Couldn't close server socket.");
+                System.out.println("Server: Couldn't close server socket.");
             }
         }
     }

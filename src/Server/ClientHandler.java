@@ -21,7 +21,6 @@ public class ClientHandler extends Thread {
         this.clientSockets = clientSockets;
     }
 
-    // Stuff to do with individual client
     public void run() {
         BufferedReader in = null;
         PrintWriter out = null;
@@ -29,45 +28,44 @@ public class ClientHandler extends Thread {
         try {
             String message = null;
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            //TODO check message for commands.. strings starting with "/"
+            //TODO check messages for commands.. strings starting with "/"
             //TODO commands: /quit, /who, /nick <nickname>, /help, / prints "unknown command"
+
             while (true) {
-                // Get message from client and echo it back
-                System.out.println("Thread " + Thread.currentThread().getId() + " blocking at readLine...");
                 message = in.readLine();
 
                 if (message.equals("") || message.equals("\n")) {
-                    System.out.println("Breaking at thread " + Thread.currentThread().getId() + "...");
+                    System.out.println("message equals \"\" or \"\\n\"");
+
+                    int socketToRemove = clientSockets.indexOf(clientSocket);
+                    clientSockets.remove(socketToRemove);
+
+                    System.out.println("breaking threadID: " + Thread.currentThread().getId());
                     break;
                 }
 
-                // Send message to all clients
+                System.out.println("ClientHandler: TEXT WAS ENTERED");
                 for (int i = 0; i < clientSockets.size(); i++) {
+
+                    //do not send my own message to myself
                     if (clientSockets.get(i).equals(clientSocket))
                         continue;
 
                     out = new PrintWriter(clientSockets.get(i).getOutputStream(), true);
-                    System.out.println("Sending: " + message + " to client; " + clientSockets.get(i).getInetAddress() + ": " + clientSockets.get(i).getPort());
+                    System.out.println("Sending: " + message + " from client: " + clientSocket.getInetAddress() + ":" + clientSocket.getPort() + " to client " + clientSockets.get(i).getInetAddress() + ":" + clientSockets.get(i).getPort());
                     out.println(message);
                     out.flush();
                 }
             }
-
-            System.out.println("client put nothing in string");
-        }
-        catch (IOException ioe) {
-            System.out.println("ClientHandler " + Thread.currentThread().getId() + " : IOException.");
+        } catch (IOException ioe) {
+            System.out.println("ClientHandler: IOException." + Thread.currentThread().getId());
             System.out.println(ioe.getMessage());
-        }
-        finally {
-            System.out.println("Thread " + Thread.currentThread().getId() + " is in finally block. Closing in, out, and socket.");
+        } finally {
             try {
-//                in.close();
-//                out.close();
-                System.out.println("Closing socket with port: " + clientSocket.getPort());
+                //in.close();
+                //out.close();
                 clientSocket.close();
-            }
-            catch (IOException ioe) {
+            } catch (IOException ioe) {
                 System.out.println("Couldn't close client socket properly.");
             }
         }

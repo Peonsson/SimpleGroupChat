@@ -32,7 +32,7 @@ public class ClientMessageReceiver extends Thread {
             }
         }
         catch (IOException ioe) {
-            System.out.println("IOException.");
+            System.out.println("ClientMessageReciever IOException.");
         }
     }
 }
