@@ -9,9 +9,11 @@ import java.net.Socket;
  * Created by Peonsson and roppe546 on 2015-09-26.
  */
 public class ClientMessageReceiver extends Thread {
-    BufferedReader in = null;
+    private BufferedReader in = null;
+    private Socket server = null;
 
     public ClientMessageReceiver(Socket server) {
+        this.server = server;
         try {
             in = new BufferedReader(new InputStreamReader(server.getInputStream()));
         }
@@ -30,7 +32,12 @@ public class ClientMessageReceiver extends Thread {
             }
         }
         catch (IOException ioe) {
-            System.out.println("ClientMessageReciever IOException.");
+            System.err.println("Server terminated unexpectedly. Closing socket and halting execution.");
+            try {
+                server.close();
+            }catch(IOException e ) {
+                System.out.println(e.getMessage());
+            }
         }
     }
 }
