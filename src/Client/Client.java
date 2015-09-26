@@ -1,4 +1,4 @@
-package src.Client;
+package Client;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -7,6 +7,8 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 
 /**
+ * 2015-09-26
+ * by Peonsson and roppe546
  * Assignment 1B.
  */
 public class Client {

@@ -1,4 +1,4 @@
-package src.Server;
+package Server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -6,6 +6,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 /**
+ * 2015-09-26
+ * by Peonsson and roppe546
  * Assignment 1B.
  */
 public class Server {
