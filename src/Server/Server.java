@@ -24,7 +24,7 @@ public class Server {
                 ConnectedClient client = new ConnectedClient("anonymous" + counter++, clientSocket);
 
                 out = new PrintWriter(clientSocket.getOutputStream(), true);
-                out.println("Welcome message!");
+                out.println("Welcome to Peonsson and Roppe546:s SimpleGroupChat!");
                 out.flush();
 
                 clients.add(client);
