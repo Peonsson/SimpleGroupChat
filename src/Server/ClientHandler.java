@@ -32,7 +32,9 @@ public class ClientHandler extends Thread {
 
                 if (message.equals("") || message.equals("\n")) {
                     int clientToRemove = connectedClients.indexOf(client);
-                    connectedClients.remove(clientToRemove);
+                    synchronized (connectedClients) {
+                        connectedClients.remove(clientToRemove);
+                    }
 
                     break;
                 }
@@ -61,8 +63,8 @@ public class ClientHandler extends Thread {
 
             switch (message) {
                 case "/quit":
+                    int clientToRemove = connectedClients.indexOf(client);
                     synchronized (connectedClients) {
-                        int clientToRemove = connectedClients.indexOf(client);
                         connectedClients.remove(clientToRemove);
                     }
                     broadcast(client.getNickname() + " has left chat.");
