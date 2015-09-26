@@ -87,11 +87,8 @@ public class ClientHandler extends Thread {
     private boolean checkForCommands(String message) {
         try {
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+
             switch (message) {
-                case "/":
-                    out.println("Unknown command");
-                    out.flush();
-                    return true;
                 case "/quit":
                     out.println("Qutting..");
                     out.flush();
@@ -108,12 +105,18 @@ public class ClientHandler extends Thread {
                     out.println("You can use the following commands:\n/who - list all clients online\n/nick [NICKNAME] - change nickname\n/quit - quit the chat");
                     out.flush();
                     return true;
+                default:
+                    if(message.startsWith("/")) {
+                        out.println("Unknown command");
+                        out.flush();
+                        return true;
+                    }
+                    break;
             }
         }
         catch (IOException e) {
             System.err.println(e.getMessage());
         }
-
         return false;
     }
 }
