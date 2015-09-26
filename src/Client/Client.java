@@ -31,7 +31,6 @@ public class Client {
                 message = scan.nextLine();
                 out.println(message);
                 if (message.equals("/quit")) {
-                    System.out.println("Halting execution..");
                     break;
                 }
             }

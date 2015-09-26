@@ -21,11 +21,20 @@ public class ClientHandler extends Thread {
     // Stuff to do with individual client
     public void run() {
         try {
-            String message;
+            String message = "";
             BufferedReader in = new BufferedReader(new InputStreamReader(client.getClientSocket().getInputStream()));
 
             while (true) {
                 message = in.readLine();
+                if(message == null) {
+                    broadcast(client.getNickname() + " has left the chat.");
+                    for (int i = 0; i < connectedClients.size(); i++) {
+                        if (connectedClients.get(i).getNickname().equals(client.getNickname()))
+                            synchronized (connectedClients) {
+                                connectedClients.remove(i);
+                            }
+                    }
+                }
 
                 if (!checkForCommands(message)) {
                     broadcast(client.getNickname() + ": " + message);
@@ -96,7 +105,6 @@ public class ClientHandler extends Thread {
                 out = new PrintWriter(connectedClients.get(i).getClientSocket().getOutputStream(), true);
                 out.println(message);
                 System.out.println("Sending: " + message + " from client: " + client.getClientSocket().getInetAddress() + ":" + client.getClientSocket().getPort() + " to client " + connectedClients.get(i).getClientSocket().getInetAddress() + ":" + connectedClients.get(i).getClientSocket().getPort());
-
             }
             catch (IOException e) {
                 System.out.println("ClientHandler: Couldn't send to all clients registered.");
@@ -109,7 +117,6 @@ public class ClientHandler extends Thread {
                         i--;
                     }
                 }
-
                 System.out.println(connectedClients.toString());
             }
         }
