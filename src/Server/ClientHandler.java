@@ -38,7 +38,9 @@ public class ClientHandler extends Thread {
                     System.out.println("message equals \"\" or \"\\n\"");
 
                     int clientToRemove = connectedClients.indexOf(client);
-                    connectedClients.remove(clientToRemove);
+                    synchronized (connectedClients) {
+                        connectedClients.remove(clientToRemove);
+                    }
 
                     System.out.println("breaking threadID: " + Thread.currentThread().getId());
                     break;
@@ -79,8 +81,8 @@ public class ClientHandler extends Thread {
 
             switch (message) {
                 case "/quit":
+                    int clientToRemove = connectedClients.indexOf(client);
                     synchronized (connectedClients) {
-                        int clientToRemove = connectedClients.indexOf(client);
                         connectedClients.remove(clientToRemove);
                     }
                     broadcast(client.getNickname() + " has left chat.");
