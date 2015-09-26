@@ -14,7 +14,8 @@ import java.util.ArrayList;
 public class Server {
     public static void main(String[] args) {
         ServerSocket serverSocket = null;
-        ArrayList<Socket> clients = new ArrayList<Socket>();
+        ArrayList<ConnectedClient> clients = new ArrayList<ConnectedClient>();
+        int counter = 1;
 
         try {
             serverSocket = new ServerSocket(50015);
@@ -22,13 +23,14 @@ public class Server {
             System.out.println("Server: Waiting for connections..");
             while (true) {
                 Socket clientSocket = serverSocket.accept();
+                ConnectedClient client = new ConnectedClient("anonymous" + counter++, clientSocket);
 
                 out = new PrintWriter(clientSocket.getOutputStream(), true);
                 out.println("Welcome message!");
                 out.flush();
 
-                clients.add(clientSocket);
-                ClientHandler cHandler = new ClientHandler(clientSocket, clients);
+                clients.add(client);
+                ClientHandler cHandler = new ClientHandler(client, clients);
                 cHandler.start();
             }
         }

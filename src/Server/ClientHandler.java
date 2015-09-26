@@ -13,12 +13,12 @@ import java.util.ArrayList;
  * Assignment 1B.
  */
 public class ClientHandler extends Thread {
-    private Socket clientSocket = null;
-    private ArrayList<Socket> clientSockets = null;
+    private ConnectedClient client = null;
+    private ArrayList<ConnectedClient> connectedClients = null;
 
-    public ClientHandler(Socket clientSocket, ArrayList<Socket> clientSockets) {
-        this.clientSocket = clientSocket;
-        this.clientSockets = clientSockets;
+    public ClientHandler(ConnectedClient client, ArrayList<ConnectedClient> connectedClients) {
+        this.client = client;
+        this.connectedClients = connectedClients;
     }
 
     // Stuff to do with individual client
@@ -28,11 +28,10 @@ public class ClientHandler extends Thread {
 
         try {
             String message = null;
-            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            in = new BufferedReader(new InputStreamReader(client.getClientSocket().getInputStream()));
 
             //TODO check messages for commands.. strings starting with "/"
             //TODO commands: /quit, /who, /nick <nickname>, /help, / prints "unknown command"
-
             while (true) {
                 // Get message from client and echo it back
                 System.out.println("bufferedReader ID: " + in.toString());
@@ -42,8 +41,8 @@ public class ClientHandler extends Thread {
                 if (message.equals("") || message.equals("\n")) {
                     System.out.println("message equals \"\" or \"\\n\"");
 
-                    int socketToRemove = clientSockets.indexOf(clientSocket);
-                    clientSockets.remove(socketToRemove);
+                    int clientToRemove = connectedClients.indexOf(client);
+                    connectedClients.remove(clientToRemove);
 
                     System.out.println("breaking threadID: " + Thread.currentThread().getId());
                     break;
@@ -51,15 +50,15 @@ public class ClientHandler extends Thread {
 
                 if (!checkForCommands(message)) {
                     System.out.println("ClientHandler: No command entered.");
-                    for (int i = 0; i < clientSockets.size(); i++) {
+                    for (int i = 0; i < connectedClients.size(); i++) {
 
                         //do not send my own message to myself
-                        if (clientSockets.get(i).equals(clientSocket))
+                        if (connectedClients.get(i).equals(client))
                             continue;
 
-                        out = new PrintWriter(clientSockets.get(i).getOutputStream(), true);
-                        System.out.println("Sending: " + message + " from client: " + clientSocket.getInetAddress() + ":" + clientSocket.getPort() + " to client " + clientSockets.get(i).getInetAddress() + ":" + clientSockets.get(i).getPort());
-                        out.println(message);
+                        out = new PrintWriter(connectedClients.get(i).getClientSocket().getOutputStream(), true);
+                        System.out.println("Sending: " + message + " from client: " + client.getClientSocket().getInetAddress() + ":" + client.getClientSocket().getPort() + " to client " + connectedClients.get(i).getClientSocket().getInetAddress() + ":" + connectedClients.get(i).getClientSocket().getPort());
+                        out.println(client.getNickname() + ": " + message);
                         out.flush();
                     }
                 }
@@ -76,7 +75,7 @@ public class ClientHandler extends Thread {
             try {
                 //in.close();
                 //out.close();
-                clientSocket.close();
+                client.getClientSocket().close();
             }
             catch (IOException ioe) {
                 System.out.println("Couldn't close client socket properly.");
@@ -86,7 +85,7 @@ public class ClientHandler extends Thread {
 
     private boolean checkForCommands(String message) {
         try {
-            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+            PrintWriter out = new PrintWriter(client.getClientSocket().getOutputStream(), true);
 
             switch (message) {
                 case "/quit":
@@ -97,21 +96,21 @@ public class ClientHandler extends Thread {
                     out.println("Who am I?");
                     out.flush();
                     return true;
-                case "/nick":
-                    out.println("Unknown command");
-                    out.flush();
-                    return true;
                 case "/help":
                     out.println("You can use the following commands:\n/who - list all clients online\n/nick [NICKNAME] - change nickname\n/quit - quit the chat");
                     out.flush();
                     return true;
                 default:
-                    if(message.startsWith("/")) {
+                    if(message.startsWith("/nick")) {
+                        String[] myStrings = message.split(" ");
+                        client.setNickname(myStrings[1]);
+                        return true;
+                    }
+                    else if(message.startsWith("/")) {
                         out.println("Unknown command");
                         out.flush();
                         return true;
                     }
-                    break;
             }
         }
         catch (IOException e) {
