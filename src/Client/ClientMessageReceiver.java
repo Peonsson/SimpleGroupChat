@@ -32,7 +32,7 @@ public class ClientMessageReceiver extends Thread {
             }
         }
         catch (IOException ioe) {
-            System.err.println("Server terminated unexpectedly. Closing socket and halting execution.");
+            System.out.println("Disconnected.");
             try {
                 server.close();
             }catch(IOException e ) {

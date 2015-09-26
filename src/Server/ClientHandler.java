@@ -40,6 +40,8 @@ public class ClientHandler extends Thread {
                     broadcast(client.getNickname() + ": " + message);
                 }
             }
+        } catch (NullPointerException e) {
+            return;
         }
         catch (IOException ioe) {
             return;

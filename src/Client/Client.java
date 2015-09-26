@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 /**
@@ -23,12 +24,15 @@ public class Client {
             receiver.start();
 
             out = new PrintWriter(socket.getOutputStream(), true);
-
             Scanner scan = new Scanner(System.in);
 
-            String message;
+            String message = "";
             while (true) {
-                message = scan.nextLine();
+                try {
+                    message = scan.nextLine();
+                } catch(NoSuchElementException e) {
+                    return;
+                }
                 out.println(message);
                 if (message.equals("/quit")) {
                     break;
@@ -45,6 +49,8 @@ public class Client {
         finally {
             try {
                 socket.close();
+            } catch (NullPointerException e) {
+                System.out.println("Server probably not alive.");
             }
             catch (IOException ioe) {
                 System.out.println("Couldn't close socket.");
