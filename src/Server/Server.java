@@ -1,6 +1,7 @@
 package Server;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -17,9 +18,15 @@ public class Server {
 
         try {
             serverSocket = new ServerSocket(50015);
+            PrintWriter out = null;
             System.out.println("Server: Waiting for connections..");
             while (true) {
                 Socket clientSocket = serverSocket.accept();
+
+                out = new PrintWriter(clientSocket.getOutputStream(), true);
+                out.println("Welcome message!");
+                out.flush();
+
                 clients.add(clientSocket);
                 ClientHandler cHandler = new ClientHandler(clientSocket, clients);
                 cHandler.start();
