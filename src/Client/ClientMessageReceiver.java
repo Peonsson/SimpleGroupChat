@@ -6,9 +6,7 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 
 /**
- * 2015-09-26
- * by Peonsson and roppe546
- * Assignment 1B.
+ * Created by Peonsson and roppe546 on 2015-09-26.
  */
 public class ClientMessageReceiver extends Thread {
     BufferedReader in = null;
@@ -28,7 +26,7 @@ public class ClientMessageReceiver extends Thread {
         try {
             while (true) {
                 receiveText = in.readLine();
-                System.out.println("Received: " + receiveText);
+                System.out.println(receiveText);
             }
         }
         catch (IOException ioe) {

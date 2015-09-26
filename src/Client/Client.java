@@ -7,9 +7,7 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 
 /**
- * 2015-09-26
- * by Peonsson and roppe546
- * Assignment 1B.
+ * Created by Peonsson and roppe546 on 2015-09-26.
  */
 public class Client {
     public static void main(String[] args) {
@@ -18,23 +16,24 @@ public class Client {
         PrintWriter out = null;
 
         try {
-            // Create socket to address server at port 50020
             InetAddress server = InetAddress.getLocalHost();
             socket = new Socket(server, 50015);
 
             ClientMessageReceiver receiver = new ClientMessageReceiver(socket);
             receiver.start();
 
-            // Create socket output objects
             out = new PrintWriter(socket.getOutputStream(), true);
 
             Scanner scan = new Scanner(System.in);
 
             String message = null;
             while (message == null || !message.equals("")) {
-                System.out.print("Message: ");
                 message = scan.nextLine();
                 out.println(message);
+                if(message.equals("/quit")) {
+                    System.out.println("Halting execution..");
+                    break;
+                }
             }
             scan.close();
         }

@@ -7,9 +7,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 /**
- * 2015-09-26
- * by Peonsson and roppe546
- * Assignment 1B.
+ * Created by Peonsson and roppe546 on 2015-09-26.
  */
 public class Server {
     public static void main(String[] args) {

@@ -3,7 +3,7 @@ package Server;
 import java.net.Socket;
 
 /**
- * Created by Peonsson on 2015-09-26.
+ * Created by Peonsson and roppe546 on 2015-09-26.
  */
 public class ConnectedClient {
     private String nickname;

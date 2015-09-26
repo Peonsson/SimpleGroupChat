@@ -8,9 +8,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 /**
- * 2015-09-26
- * by Peonsson and roppe546
- * Assignment 1B.
+ * Created by Peonsson and roppe546 on 2015-09-26.
  */
 public class ClientHandler extends Thread {
     private ConnectedClient client = null;
@@ -21,7 +19,6 @@ public class ClientHandler extends Thread {
         this.connectedClients = connectedClients;
     }
 
-    // Stuff to do with individual client
     public void run() {
         BufferedReader in = null;
         PrintWriter out = null;
@@ -33,7 +30,6 @@ public class ClientHandler extends Thread {
             //TODO check messages for commands.. strings starting with "/"
             //TODO commands: /quit, /who, /nick <nickname>, /help, / prints "unknown command"
             while (true) {
-                // Get message from client and echo it back
                 System.out.println("bufferedReader ID: " + in.toString());
                 System.out.println("Thread " + Thread.currentThread().getId() + " blocking at readLine...");
                 message = in.readLine();
@@ -59,25 +55,19 @@ public class ClientHandler extends Thread {
                         out = new PrintWriter(connectedClients.get(i).getClientSocket().getOutputStream(), true);
                         System.out.println("Sending: " + message + " from client: " + client.getClientSocket().getInetAddress() + ":" + client.getClientSocket().getPort() + " to client " + connectedClients.get(i).getClientSocket().getInetAddress() + ":" + connectedClients.get(i).getClientSocket().getPort());
                         out.println(client.getNickname() + ": " + message);
-                        out.flush();
                     }
                 }
             }
         } catch (IOException ioe) {
             System.out.println("ClientHandler: IOException." + Thread.currentThread().getId());
             System.out.println(ioe.getMessage());
-        }
-        catch (NullPointerException npe) {
+        } catch (NullPointerException npe) {
             //TODO: CLEAR INCORRECTLY DISCONNECTED CLIENTS FROM LIST
-        }
-        finally {
+        } finally {
             System.out.println("Thread " + Thread.currentThread().getId() + " is in finally block. Closing in, out, and socket.");
             try {
-                //in.close();
-                //out.close();
                 client.getClientSocket().close();
-            }
-            catch (IOException ioe) {
+            } catch (IOException ioe) {
                 System.out.println("Couldn't close client socket properly.");
             }
         }
@@ -89,33 +79,53 @@ public class ClientHandler extends Thread {
 
             switch (message) {
                 case "/quit":
-                    out.println("Qutting..");
-                    out.flush();
+                    synchronized (connectedClients) {
+                        int clientToRemove = connectedClients.indexOf(client);
+                        connectedClients.remove(clientToRemove);
+                    }
+                    broadcast(client.getNickname() + " has left chat.");
                     return true;
                 case "/who":
-                    out.println("Who am I?");
-                    out.flush();
+                    String whoMsg = "";
+                    for (int i = 0; i < connectedClients.size(); i++) {
+                        whoMsg += connectedClients.get(i).getNickname() + "\n";
+                    }
+                    out.println(whoMsg);
                     return true;
                 case "/help":
-                    out.println("You can use the following commands:\n/who - list all clients online\n/nick [NICKNAME] - change nickname\n/quit - quit the chat");
-                    out.flush();
+                    out.println("You can use the following commands:\n/who - list all clients online\n/nick <NICKNAME> - change nickname\n/quit - quit the chat");
                     return true;
                 default:
-                    if(message.startsWith("/nick")) {
+                    if (message.startsWith("/nick")) {
                         String[] myStrings = message.split(" ");
+                        for (int i = 0; i < connectedClients.size(); i++) {
+                            if (myStrings[1].equals(connectedClients.get(i).getNickname())) {
+                                out.println("Nickname already in use please choose another one!");
+                                return true;
+                            }
+                        }
                         client.setNickname(myStrings[1]);
                         return true;
-                    }
-                    else if(message.startsWith("/")) {
+                    } else if (message.startsWith("/")) {
                         out.println("Unknown command");
-                        out.flush();
                         return true;
                     }
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             System.err.println(e.getMessage());
         }
         return false;
+    }
+
+    private void broadcast(String message) {
+        PrintWriter out = null;
+        for (int i = 0; i < connectedClients.size(); i++) {
+            try {
+                out = new PrintWriter(connectedClients.get(i).getClientSocket().getOutputStream(), true);
+                out.println(message);
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
+        }
     }
 }
