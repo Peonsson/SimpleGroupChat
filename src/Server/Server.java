@@ -17,7 +17,8 @@ public class Server {
 
         try {
             serverSocket = new ServerSocket(50015);
-            PrintWriter out = null;
+            PrintWriter out;
+
             System.out.println("Server: Waiting for connections..");
             while (true) {
                 Socket clientSocket = serverSocket.accept();
