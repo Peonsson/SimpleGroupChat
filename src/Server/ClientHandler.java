@@ -31,14 +31,22 @@ public class ClientHandler extends Thread {
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             //TODO check message for commands.. strings starting with "/"
             //TODO commands: /quit, /who, /nick <nickname>, /help, / prints "unknown command"
-            while (message == null || !message.equals("")) {
+            while (true) {
                 // Get message from client and echo it back
                 message = in.readLine();
 
+                if (message.equals("") || message.equals("\n")) {
+                    System.out.println("GÅR DEN IN HÄR");
+//                    int socketToRemove = clientSockets.indexOf(clientSocket);
+//                    clientSockets.remove(socketToRemove);
+                    break;
+                }
+
+                System.out.println("TEXT WAS ENTERED");
                 // Send message to all clients
                 for (int i = 0; i < clientSockets.size(); i++) {
-                    if(clientSockets.get(i).isClosed())
-                        clientSockets.remove(i);
+//                    if(clientSockets.get(i).isClosed())
+//                        clientSockets.remove(i);
 
                     if(clientSockets.get(i).equals(clientSocket))
                         continue;
@@ -48,9 +56,12 @@ public class ClientHandler extends Thread {
                     out.flush();
                 }
             }
+
+            System.out.println("client put nothing in string");
         }
         catch (IOException ioe) {
-            System.out.println("IOException.");
+            System.out.println("ClientHandler: IOException.");
+            System.out.println(ioe.getMessage());
         }
         finally {
             try {
