@@ -23,8 +23,8 @@ public class ClientMessageReceiver extends Thread {
     }
 
     public void run() {
-        String receiveText;
 
+        String receiveText;
         try {
             while (true) {
                 receiveText = in.readLine();

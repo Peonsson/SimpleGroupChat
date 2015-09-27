@@ -12,10 +12,10 @@ import java.util.Scanner;
  */
 public class Client {
     public static void main(String[] args) {
+
         Socket socket = null;
         BufferedReader in = null;
         PrintWriter out = null;
-
         try {
             InetAddress server = InetAddress.getLocalHost();
             socket = new Socket(server, 50015);

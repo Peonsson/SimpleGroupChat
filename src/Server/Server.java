@@ -11,14 +11,13 @@ import java.util.ArrayList;
  */
 public class Server {
     public static void main(String[] args) {
+
         ServerSocket serverSocket = null;
         ArrayList<ConnectedClient> clients = new ArrayList<ConnectedClient>();
         int counter = 1;
-
         try {
             serverSocket = new ServerSocket(50015);
             PrintWriter out;
-
             System.out.println("Server: Waiting for connections..");
             while (true) {
                 Socket clientSocket = serverSocket.accept();

@@ -18,12 +18,11 @@ public class ClientHandler extends Thread {
         this.connectedClients = connectedClients;
     }
 
-    // Stuff to do with individual client
     public void run() {
         try {
+
             String message = "";
             BufferedReader in = new BufferedReader(new InputStreamReader(client.getClientSocket().getInputStream()));
-
             while (true) {
                 message = in.readLine();
                 if(message == null) {
@@ -35,7 +34,6 @@ public class ClientHandler extends Thread {
                             }
                     }
                 }
-
                 if (!checkForCommands(message)) {
                     broadcast(client.getNickname() + ": " + message);
                 }
@@ -51,7 +49,6 @@ public class ClientHandler extends Thread {
     private boolean checkForCommands(String message) {
         try {
             PrintWriter out = new PrintWriter(client.getClientSocket().getOutputStream(), true);
-
             switch (message) {
                 case "/quit":
                     int clientToRemove = connectedClients.indexOf(client);
@@ -96,9 +93,10 @@ public class ClientHandler extends Thread {
     }
 
     private void broadcast(String message) {
-        PrintWriter out;
 
+        PrintWriter out;
         for (int i = 0; i < connectedClients.size(); i++) {
+
             // Do not send clients own message to itself
             if (connectedClients.get(i).equals(client))
                 continue;
