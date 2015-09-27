@@ -10,6 +10,7 @@ import java.util.ArrayList;
  * Created by Peonsson and roppe546 on 2015-09-26.
  */
 public class ClientHandler extends Thread {
+
     private ConnectedClient client = null;
     private ArrayList<ConnectedClient> connectedClients = null;
 

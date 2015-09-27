@@ -9,9 +9,9 @@ import java.net.Socket;
  * Created by Peonsson and roppe546 on 2015-09-26.
  */
 public class ClientMessageReceiver extends Thread {
+
     private BufferedReader in = null;
     private Socket server = null;
-
     public ClientMessageReceiver(Socket server) {
         this.server = server;
         try {
